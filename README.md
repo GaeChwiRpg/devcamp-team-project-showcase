@@ -32,8 +32,12 @@
 | Day 4 | 리뷰 | Chris | [#6](https://github.com/GaeChwiRpg/devcamp-team-project-showcase/pull/6) | ✅ merged |
 | Day 4 | 운영 | Dasol | [#7](https://github.com/GaeChwiRpg/devcamp-team-project-showcase/pull/7) | ✅ merged |
 | Day 5 | 통합 | 팀 전원 | [#8](https://github.com/GaeChwiRpg/devcamp-team-project-showcase/pull/8) | ✅ merged |
+| Week 10 | CI 보강 | Dasol | [#9](https://github.com/GaeChwiRpg/devcamp-team-project-showcase/pull/9) | ✅ merged |
+| Week 10 | 발표·회고·면접 | 팀 전원 | [#10](https://github.com/GaeChwiRpg/devcamp-team-project-showcase/pull/10) | ✅ merged |
 
 ## 핵심 문서
+
+### 산출물 (Phase 1~3)
 
 - [`PRD.md`](./PRD.md) — 제품 요구사항
 - [`DECISIONS.md`](./DECISIONS.md) — 의사결정 로그 6건
@@ -42,6 +46,13 @@
 - [`LIFECYCLE-COVERAGE.md`](./LIFECYCLE-COVERAGE.md) — 5 단계 적용 흔적 매트릭스
 - [`INTEGRATION-LOG.md`](./INTEGRATION-LOG.md) — Day 1~5 일자별 진행
 - [`MONITORING.md`](./MONITORING.md) — 운영 모니터링 가이드
+
+### Week 10 마무리 (Phase 4)
+
+- [`presentation/SLIDE-OUTLINE.md`](./presentation/SLIDE-OUTLINE.md) — 12장 슬라이드 골격 + 발표자 분담
+- [`presentation/DEMO-SCRIPT.md`](./presentation/DEMO-SCRIPT.md) — 5분 라이브 데모 cURL 시나리오 + Plan B
+- [`RETROSPECTIVE.md`](./RETROSPECTIVE.md) — KPT 회고 + Phase 3 우선순위
+- [`INTERVIEW-ANSWERS.md`](./INTERVIEW-ANSWERS.md) — 5장 답변 흐름으로 6개 면접 질문 sample
 
 ## 5 단계 통과 검증
 

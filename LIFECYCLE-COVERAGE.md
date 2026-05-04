@@ -58,9 +58,9 @@
 ## Phase 진행 상태
 
 - ✅ **Phase 1** — 기획 골격 (README, PRD, DECISIONS, LIFECYCLE-COVERAGE 초안)
-- ✅ **Phase 2 (현재)** — 코드 baseline + 5 단계 도구 설정
-- ⏳ **Phase 3** — 가상 4명 팀 PR 시연 (feature 브랜치별 PR 4~8개 + INTEGRATION-LOG)
-- ⏳ **Phase 4** — 마무리 (발표 자료, 회고 sample, 마케팅 README)
+- ✅ **Phase 2** — 코드 baseline + 5 단계 도구 설정
+- ✅ **Phase 3** — 가상 4명 팀 PR 시연 (8 PR + INTEGRATION-LOG Day 1~5)
+- ✅ **Phase 4 (현재)** — Week 10 finale (SLIDE-OUTLINE / DEMO-SCRIPT / RETROSPECTIVE / INTERVIEW-ANSWERS)
 
 ## Phase 2 통과 검증
 
