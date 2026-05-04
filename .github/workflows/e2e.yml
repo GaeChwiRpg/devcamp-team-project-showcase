@@ -19,15 +19,25 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build & start app (background)
+      - name: Build app
+        run: ./gradlew bootJar --no-daemon
+
+      - name: Start app (background)
         run: |
-          ./gradlew bootJar
-          java -jar build/libs/*-SNAPSHOT.jar &
-          # 8080 포트 바인딩 대기
-          for i in {1..30}; do
-            if curl -s http://localhost:8080/actuator/health >/dev/null; then break; fi
+          nohup java -jar build/libs/*-SNAPSHOT.jar > app.log 2>&1 &
+          echo $! > app.pid
+          # actuator/health 가 200 OK 응답할 때까지 최대 90초 대기
+          for i in {1..90}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || echo "000")
+            if [ "$code" = "200" ]; then
+              echo "App is up after ${i}s"
+              exit 0
+            fi
             sleep 1
           done
+          echo "App failed to start in 90s. Recent log:"
+          tail -100 app.log
+          exit 1
 
       - uses: actions/setup-node@v4
         with:

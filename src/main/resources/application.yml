@@ -16,6 +16,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    defer-datasource-initialization: true   # data.sql이 Hibernate 스키마 생성 후 실행되도록
     properties:
       hibernate:
         format_sql: true
