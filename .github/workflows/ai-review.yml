@@ -1,15 +1,21 @@
 name: AI Review (Claude)
 
-# 책 10주차 01 — Claude GitHub Actions Review
+# Claude GitHub Actions Review
 # PR 열림/업데이트 시 자동 트리거. 팀 CLAUDE.md를 prompt로 전달해 팀 룰 강제.
+#
+# 설정 필요:
+# - Repository secrets에 ANTHROPIC_API_KEY 등록 (https://console.anthropic.com/)
+# - 자동 트리거 + 수동(workflow_dispatch) 모두 지원
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: write
+  id-token: write   # OIDC 토큰 발급 (anthropics/claude-code-action 요구)
 
 jobs:
   review:
@@ -20,7 +26,21 @@ jobs:
         with:
           fetch-depth: 2
 
+      # ANTHROPIC_API_KEY secret이 없으면 자동 스킵 (시연 환경에서 PR이 빨갛게 표시되지 않게).
+      - name: Check secret presence
+        id: check_secret
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY secret 미등록. AI 리뷰 step을 건너뜁니다. https://console.anthropic.com/ 에서 키 발급 후 Repo > Settings > Secrets에 ANTHROPIC_API_KEY 등록하세요."
+          fi
+
       - name: Claude Review
+        if: steps.check_secret.outputs.present == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
