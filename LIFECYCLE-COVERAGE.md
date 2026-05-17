@@ -1,154 +1,73 @@
 # LIFECYCLE-COVERAGE — 라이프사이클 5 단계 적용 흔적
 
 > 가상 4명 팀이 운영 티켓 시스템에 5 단계를 어떻게 적용했는지 매트릭스 + 단계별 산출물 추적.
-> Phase 2~3가 진행되면서 점진 채워집니다.
 
-## 매트릭스
+## 매트릭스 (Phase 2 종료 시점)
 
-| 단계 | 책임자 | 책 챕터 (`books/05-week8-...`) | 핵심 도구 | 산출물 (예정 위치) | 상태 |
-| --- | --- | --- | --- | --- | --- |
-| 1. 기획 | 팀원 A | 9주차 03 | Jira MCP, AI PRD 자동 생성 | `PRD.md` ✅, `docs/jira-tickets.md` (Phase 2) | 골격 ✅ |
-| 2. 코딩 | 팀 전원 | 7주차 04~07, 9주차 02·04·05 | `CLAUDE.md`, Commands, Hooks, gh CLI, Sub-agents | `CLAUDE.md` (Phase 2), `API-CONTRACT.md` (Phase 2), `src/` (Phase 2) | 대기 |
-| 3. 테스트 | 팀원 B | 9주차 06 | Playwright MCP | `tests/e2e/` (Phase 2), `docs/test-strategy.md` (Phase 2) | 대기 |
-| 4. 리뷰 | 팀원 C | 10주차 01 | Claude GitHub Actions, CodeRabbit | `.github/workflows/ai-review.yml` (Phase 2), `docs/review-policy.md` (Phase 3) | 대기 |
-| 5. 배포·운영 | 팀원 D | 10주차 06, 02~05 | Sentry MCP, Docker Compose | `MONITORING.md` (Phase 2), `docker-compose.yml` (Phase 2) | 대기 |
+| 단계 | 책임자 | 핵심 도구 | 산출물 | 상태 |
+| --- | --- | --- | --- | --- |
+| 1. 기획 | 팀원 A | Jira MCP, AI PRD | [`PRD.md`](./PRD.md), [`DECISIONS.md`](./DECISIONS.md) | Phase 1 ✅ · Jira 티켓 시연은 Phase 3 |
+| 2. 코딩 | 팀 전원 | claude.md, Commands, Hooks | [`CLAUDE.md`](./CLAUDE.md), [`API-CONTRACT.md`](./API-CONTRACT.md), `src/`, `.claude/` | Phase 2 ✅ |
+| 3. 테스트 | 팀원 B | Playwright MCP | [`tests/e2e/`](./tests/e2e/), [`.github/workflows/e2e.yml`](./.github/workflows/e2e.yml) | Phase 2 ✅ (sample 1개) · 시나리오 4개 확장은 Phase 3 |
+| 4. 리뷰 | 팀원 C | Claude GitHub Actions | [`.github/workflows/ai-review.yml`](./.github/workflows/ai-review.yml) | Phase 2 ✅ (workflow) · 실제 리뷰 시연은 Phase 3 |
+| 5. 배포·운영 | 팀원 D | Sentry MCP, Docker | [`MONITORING.md`](./MONITORING.md), [`docker-compose.yml`](./docker-compose.yml), `Dockerfile` | Phase 2 ✅ (설정) · 시연용 에러 분석은 Phase 3 |
 
 ## 단계별 적용 흐름
 
-### 1. 기획 (책 9주차 03)
+### 1. 기획
 
-#### 적용 도구
+- **PRD.md**: 페르소나 2명 + User Stories 7개 + endpoint 8개 + 6 공통 필수 기능 매핑
+- **DECISIONS.md**: 의사결정 6건 (주제 / 분담 / 스택 / AI 기능 / 도구 / 락 전략)
+- (Phase 3) Jira MCP 연결 + AI 티켓 분해 시연 → `docs/jira-tickets.md` 추가 예정
 
-- **Jira MCP**: Claude Code에 Jira MCP 연결 → AI에게 PRD를 Jira 티켓으로 분해 위임
-- **AI PRD**: 운영자 페르소나 + 페인포인트 → PRD 초안 자동 생성
+### 2. 코딩
 
-#### 적용 흐름 (예정)
+- **CLAUDE.md** 팀 헌법: 도메인 컨텍스트 + 6 공통 필수 기능 매핑 + 코딩 규칙 (3계층/Transactional/LAZY/락/캐시) + 작업 경계 + AI 검증 규칙
+- **API-CONTRACT.md**: Phase 2 5 endpoint 정의 + 변경 이력
+- **`src/`**: Spring Boot 3.3 + Java 21 + JPA + Spring Security + Redis 통합 baseline
+  - 도메인: User / Ticket / Comment + 상태 전이 규칙 + 인덱스
+  - 서비스: TicketService (락 + 캐시 + 이벤트 + AI), AiSummaryService (stub)
+  - API: TicketController (5 endpoint, @PreAuthorize 권한 정책)
+  - Security: SecurityConfig (Phase 2 permitAll, Phase 3 JWT 통합 예정)
+- **`.claude/commands/`**: `draft-pr.md` (PR 본문 자동 작성), `check-contract.md` (API 변경 감지)
+- **`.claude/hooks/pre-tool-use.sh`**: 비밀 정보·.git·레포 외부 수정 차단
+- **`.claude/settings.json`**: PreToolUse hook 등록
 
-1. (Day 1 오전) 팀이 4명 미팅 — 추천 5개 중 1택 합의
-2. (Day 1 오후) 팀원 A가 Claude Code에 Jira MCP 연결 후 PRD 초안 자동 생성
-3. (Day 1 오후) 팀 4명이 PRD 검토 + 기능 우선순위 합의
-4. (Day 1 저녁) AI에게 PRD를 Jira 티켓 23개로 분해 위임
-5. (Day 1 저녁) 팀원별 티켓 할당
+### 3. 테스트
 
-#### 사람-only 대비 (예상)
+- **tests/e2e/ticket-create.spec.ts**: Playwright 시나리오 sample (성공 + 실패 케이스)
+- **tests/e2e/playwright.config.ts**: BASE_URL 설정 + Phase 2용 X-User-Id 헤더 자동 주입
+- **.github/workflows/e2e.yml**: bootJar 빌드 → 백그라운드 실행 → Playwright 자동 실행 → report 아티팩트
+- (Phase 3) login-flow / ticket-triage / ticket-status-transition 시나리오 추가
 
-- PRD 작성 약 4시간 → 1시간 (AI 초안 + 검토)
-- Jira 티켓 23개 분해 약 2시간 → 30분
+### 4. 리뷰
 
-#### 검증
+- **.github/workflows/ai-review.yml**: Claude GitHub Actions Review
+  - PR opened/synchronize 자동 트리거
+  - 팀 CLAUDE.md 핵심 규칙을 prompt로 전달 (3계층/Transactional/LAZY/락/캐시/API-CONTRACT 강제)
+  - 한국어 리뷰, 비전공자 톤, max 5 suggestions
+- (Phase 3) 가짜 4명 팀 PR 4~8개에서 실제 리뷰 시연 + AI vs 팀원 비교 메모
 
-- PRD 페르소나 정의 1개 + 성공 지표 4개 + 제약 사항 5개 모두 사람 최종 검토
+### 5. 배포·운영
 
----
-
-### 2. 코딩 (책 7주차 04~07, 9주차 02·04·05)
-
-#### 적용 도구
-
-- **`CLAUDE.md` 팀 헌법** (Phase 2 작성 예정)
-  - 도메인 컨텍스트 (티켓 도메인 / 6 공통 필수 기능)
-  - 코딩 규칙 (3계층 분리, @Transactional 위치, LAZY 기본)
-  - 작업 경계 (서비스 디렉토리 외 수정 금지)
-- **Commands** (Phase 2)
-  - `.claude/commands/draft-pr.md` — gh CLI로 PR 본문 자동 생성
-  - `.claude/commands/check-contract.md` — API 계약 변경 감지
-- **Hooks** (Phase 2)
-  - `.claude/hooks/pre-tool-use.sh` — 작업 경계 위반 차단
-  - `.claude/hooks/post-tool-use.sh` — git diff 시 contract 자동 갱신
-- **gh CLI + AI**: PR 본문 자동 작성, 코드 리뷰 코멘트 처리
-- **Sub-agents** (선택, Day 3): 락 전략 후보 3개 동시 비교
-
-#### 적용 흐름 (예정)
-
-(Phase 2 진행 시 채워짐)
-
-#### 검증 루프 4단계 (Week 8 정착)
-
-1. prompt 작성 시 페·목·형·제 강제
-2. claude.md 검증 규칙 적용
-3. PreToolUse hook
-4. PR 머지 전 본인 직접 실측
-
----
-
-### 3. 테스트 (책 9주차 06)
-
-#### 적용 도구
-
-- **Playwright MCP**: Claude Code에 연결 후 PRD User Story → E2E 시나리오 자동 변환
-- **시나리오 4~5개** (Phase 2 작성):
-  - login-flow.spec.ts (인증)
-  - ticket-create.spec.ts (US-001)
-  - ticket-triage.spec.ts (US-002 + US-003 통합)
-  - ticket-status-transition.spec.ts (US-004)
-  - (선택) ticket-search.spec.ts (US-006)
-
-#### 적용 흐름 (예정)
-
-1. PRD 4·5장 (User Stories)을 prompt로 전달
-2. AI가 각 Story → Playwright 시나리오 변환
-3. 사람이 셀렉터·assertion 수정
-4. CI에서 자동 실행 (.github/workflows/e2e.yml)
-
-#### 사람-only 대비 (예상)
-
-- 시나리오 4개 작성 약 6시간 → 2시간
-
----
-
-### 4. 리뷰 (책 10주차 01)
-
-#### 적용 도구
-
-- **Claude GitHub Actions** (`anthropics/claude-code-action@v1`)
-  - PR opened/synchronize 시 자동 트리거
-  - 팀 `CLAUDE.md`를 prompt로 전달 → 팀 룰 강제
-- (선택) CodeRabbit — Phase 4에서 비교 평가
-
-#### 적용 흐름 (예정)
-
-(Phase 2: workflow 설정. Phase 3: 가짜 PR에서 실제 리뷰 코멘트 시연)
-
-#### AI vs 팀원 리뷰 비교
-
-- AI 강점: 일관성 (모든 PR에 같은 룰 적용), first-pass
-- 사람 강점: 비즈니스 의도 검증, 도메인 트레이드오프 판단
-- 운영: AI = first-pass, 팀원 = second-pass
-
----
-
-### 5. 배포·운영 (책 10주차 06)
-
-#### 적용 도구
-
-- **Sentry MCP**: Claude Code에 연결 후 에러 분석 위임
-- **Docker Compose**: 시연용 단순 배포 (`docker-compose up`)
-- (Phase 4 선택) Terraform AWS — 운영급 시연
-
-#### 적용 흐름 (예정)
-
-1. (Phase 2) Spring Boot에 Sentry SDK 통합 + Sentry 프로젝트 생성
-2. (Phase 2) `docker-compose.yml` 작성 (app + redis + mysql)
-3. (Phase 3) 시연용 에러 1건을 의도적으로 발생 → AI에게 Sentry 데이터 분석 위임
-4. (Phase 3) AI가 root cause 후보 3개 제안 → 팀원 D가 검증 후 fix
-
-#### 한계
-
-- 실제 트래픽이 적어 운영 학습은 시연 수준. Week 10에 부하 테스트 보강.
-
-## 5 단계 통과 검증 (예정)
-
-| 단계 | 산출물 | AI 도구 적용 | 사람 검증 | 통과 |
-| --- | --- | --- | --- | --- |
-| 기획 | PRD.md ✅, Jira 티켓 (Phase 2) | Jira MCP + AI 분해 | 팀 4명 검토 | 진행 중 |
-| 코딩 | CLAUDE.md + API-CONTRACT + 코드 (Phase 2) | claude.md/Commands/Hooks/Sub-agents | 검증 루프 4단계 | 대기 |
-| 테스트 | tests/e2e/ 시나리오 (Phase 2) | Playwright MCP | 셀렉터 사람 검수 | 대기 |
-| 리뷰 | ai-review.yml + 리뷰 메모 (Phase 3) | Claude Actions | 팀원 second-pass | 대기 |
-| 운영 | MONITORING.md + docker-compose (Phase 2~3) | Sentry MCP | 팀원 D root cause 검증 | 대기 |
+- **MONITORING.md**: Sentry SDK 통합 가이드 + Sentry MCP 연결 명령 + 운영 시나리오 + 평가 기준
+- **docker-compose.yml**: app + mysql 8 + redis 7 시연용 스택 (healthcheck 포함)
+- **Dockerfile**: Temurin 21 JRE alpine 기반
+- (Phase 3) 시연용 에러 1건 의도적 발생 → Sentry MCP에 위임 → root cause 후보 검증
 
 ## Phase 진행 상태
 
-- ✅ **Phase 1 (현재)** — 기획 골격 (README, PRD, DECISIONS, LIFECYCLE-COVERAGE)
-- ⏳ **Phase 2** — 코드 baseline + 5 단계 도구 설정
-- ⏳ **Phase 3** — 가상 4명 팀 PR 시연 + 통합 로그
-- ⏳ **Phase 4** — 마무리 (발표 자료, 회고 sample)
+- ✅ **Phase 1** — 기획 골격 (README, PRD, DECISIONS, LIFECYCLE-COVERAGE 초안)
+- ✅ **Phase 2 (현재)** — 코드 baseline + 5 단계 도구 설정
+- ⏳ **Phase 3** — 가상 4명 팀 PR 시연 (feature 브랜치별 PR 4~8개 + INTEGRATION-LOG)
+- ⏳ **Phase 4** — 마무리 (발표 자료, 회고 sample, 마케팅 README)
+
+## Phase 2 통과 검증
+
+| 단계 | 산출물 존재 | AI 도구 설정 | 통과 |
+| --- | --- | --- | --- |
+| 기획 | PRD.md, DECISIONS.md | (Phase 3 Jira MCP) | ✅ 기획 골격 |
+| 코딩 | src/, CLAUDE.md, API-CONTRACT.md, .claude/ | claude.md/Commands/Hooks 모두 | ✅ |
+| 테스트 | tests/e2e/, e2e.yml workflow | Playwright MCP 시나리오 sample | ✅ |
+| 리뷰 | ai-review.yml | Claude Actions 통합 | ✅ |
+| 운영 | MONITORING.md, docker-compose.yml, Dockerfile | Sentry MCP 가이드 | ✅ |
