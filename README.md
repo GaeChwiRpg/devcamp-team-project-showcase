@@ -45,13 +45,13 @@
 
 ## 라이프사이클 5 단계 적용 (개요)
 
-| 단계 | 책임자 (가상 4명 팀) | 책 챕터 | 권장 도구 | 산출물 |
-| --- | --- | --- | --- | --- |
-| 1. 기획 | 팀원 A | 9주차 03 | Jira MCP, AI PRD | `PRD.md`, Jira 티켓 분해 |
-| 2. 코딩 | 팀 전원 | 7주차 04~07, 9주차 02·04·05 | claude.md, Commands, Hooks, Sub-agents | `CLAUDE.md`, `API-CONTRACT.md`, `src/` |
-| 3. 테스트 | 팀원 B | 9주차 06 | Playwright MCP | `tests/e2e/` |
-| 4. 리뷰 | 팀원 C | 10주차 01 | Claude GitHub Actions | `.github/workflows/ai-review.yml` |
-| 5. 배포·운영 | 팀원 D | 10주차 06 | Sentry MCP, Docker | `MONITORING.md`, `docker-compose.yml` |
+| 단계 | 책임자 (가상 4명 팀) | 권장 도구 | 산출물 |
+| --- | --- | --- | --- |
+| 1. 기획 | 팀원 A | Jira MCP, AI PRD | `PRD.md`, Jira 티켓 분해 |
+| 2. 코딩 | 팀 전원 | claude.md, Commands, Hooks, Sub-agents | `CLAUDE.md`, `API-CONTRACT.md`, `src/` |
+| 3. 테스트 | 팀원 B | Playwright MCP | `tests/e2e/` |
+| 4. 리뷰 | 팀원 C | Claude GitHub Actions | `.github/workflows/ai-review.yml` |
+| 5. 배포·운영 | 팀원 D | Sentry MCP, Docker | `MONITORING.md`, `docker-compose.yml` |
 
 상세는 [`LIFECYCLE-COVERAGE.md`](./LIFECYCLE-COVERAGE.md).
 
