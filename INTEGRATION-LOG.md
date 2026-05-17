@@ -117,3 +117,29 @@
 - Playwright 시나리오 4개로 확장 (login / triage / status-transition)
 - Sentry 실제 트래픽 시연
 - AI 보조 기능(요약/우선순위) 정확도 측정
+
+## Week 10 (2026-08-03 ~ 08-07) — 발표·회고·면접 준비
+
+### Week 10 Day 1 (월) — CI 안정화
+
+- **Dasol**: PR #9 — gradle wrapper 추가 + AI Review workflow OIDC/secret 처리 강화 + Spring Boot data.sql 순서 / Redis health 비활성화 / X-User-Id stub 인증 필터 통합
+- 배경: PR #1~#8 의 Actions 가 빨갛게 표시되어 발표 시 신뢰도 훼손 우려
+- 결과: e2e + ai-review 둘 다 main 에서 green. ANTHROPIC_API_KEY 미등록 시 graceful skip.
+
+### Week 10 Day 2 (화) — Phase 4 산출물
+
+- **팀 전원**: PR #10 — Week 10 finale 4 산출물 통합
+  - `presentation/SLIDE-OUTLINE.md` — 12장 슬라이드 골격 + 발표자 분담
+  - `presentation/DEMO-SCRIPT.md` — 5분 cURL 데모 스크립트 + Plan B
+  - `RETROSPECTIVE.md` — KPT 회고 + Phase 3 우선순위
+  - `INTERVIEW-ANSWERS.md` — 5장 답변 흐름 sample 6개
+  - `README.md` / `LIFECYCLE-COVERAGE.md` 갱신
+
+### Week 10 후반 — 발표·면접 리허설
+
+- 발표 리허설 3회 (Day 3·4·5). 매 회 시간 측정 + 슬라이드 1~2장 압축.
+- 면접 답변 스파링 4명 × 3 라운드. 각자 본인 경험으로 살 붙이기.
+- 가장 자주 받은 질문 Top 3 (`SLIDE-OUTLINE.md` Q&A 섹션):
+  1. pessimistic vs optimistic 락 결정 근거
+  2. AI 리뷰가 잡은 진짜 이슈 vs hallucination 구분 방법
+  3. 5일 안에 8 PR 분담 + 통합 갈등 해결 방법
